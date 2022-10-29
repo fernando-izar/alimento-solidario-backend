@@ -1,0 +1,37 @@
+{
+  "name": "alimento-solidario-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:fernando-izar/alimento-solidario-backend.git",
+  "author": "fernando-izar <fizar@me.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/uuid": "^8.3.4",
+    "bcrypt": "^5.1.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "pg": "^8.8.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.10",
+    "uuid": "^9.0.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.14",
+    "@types/jest": "^29.2.0",
+    "@types/node": "^18.11.7",
+    "@types/supertest": "^2.0.12",
+    "jest": "^29.2.2",
+    "sqlite3": "^5.1.2",
+    "supertest": "^6.3.1",
+    "ts-jest": "^29.0.3",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.8.4"
+  }
+}
