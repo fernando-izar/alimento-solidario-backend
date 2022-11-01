@@ -24,11 +24,12 @@ const loginUserService = async ({ email, password }: IUserLogin) => {
   }
 
   const token = jwt.sign(
-    { isAdm: user.isAdm },
+    { isAdm: user.isAdm,
+      type: user.type },
     process.env.SECRET_KEY as string,
     {
       expiresIn: "24h",
-      subject: user.id,
+      subject: user.id
     }
   );
   return token;
