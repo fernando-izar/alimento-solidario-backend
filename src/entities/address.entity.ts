@@ -6,7 +6,7 @@ export class Address{
     id: string
 
     @Column()
-    district: string
+    address: string
 
     @Column()
     complement: string
@@ -18,5 +18,5 @@ export class Address{
     state: string
 
     @Column({length: 8})
-    zipcode: string
+    zipCode: string
 }

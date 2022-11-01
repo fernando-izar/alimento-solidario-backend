@@ -1,3 +1,5 @@
+import { IAddressRequest } from "../addresses"
+
 export interface IUserRequest {
     email: string
     password?: string
@@ -7,6 +9,7 @@ export interface IUserRequest {
     contact: string
     type: string
     isAdm: boolean
+    address: IAddressRequest
 }
 
 export interface IUserLogin {
