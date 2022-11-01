@@ -2,10 +2,10 @@ import AppDataSource from "../../data-source";
 import { IUserRequest } from "../../interfaces/users";
 import { hash } from "bcrypt";
 import AppError from "../../errors/appError";
-import { User } from "../../entities/users/user.entity";
-import { Address } from "../../entities/addresses/address.entity";
-import { IAddressRequest } from "../../interfaces/addresses";
-const createUserService = async ({email, password, name, cnpj_cpf, responsible, contact, type, isAdm, address}: IUserRequest): Promise<User> => {
+import { User } from "../../entities/user.entity";
+import { Address } from "../../entities/address.entity";
+
+const createUserService = async ({email, password, name, cnpj_cpf, address: addressRequest, responsible, contact, type, isAdm}: IUserRequest): Promise<User> => {
     const userRepository = AppDataSource.getRepository(User);
     const addressesRepository = AppDataSource.getRepository(Address);
 
@@ -20,26 +20,26 @@ const createUserService = async ({email, password, name, cnpj_cpf, responsible, 
     if (!password) {
         throw new AppError("Password is missing!")
     }
-
-    const addressAlreadyExists = await addressesRepository.findOne({
-        where:{
-            address: address.address
-        }
+    console.log(addressRequest)
+    const addressAlreadyExists = await addressesRepository.findOneBy({
+        address: addressRequest.address,
+        complement: addressRequest.complement,
+        city: addressRequest.city,
+        state: addressRequest.state,    
+        zipCode: addressRequest.zipCode
+        
     })
 
     if (addressAlreadyExists) {
         throw new AppError("address already exists!")
     }
 
-    const newAddressObject: IAddressRequest = {
-        address: address.address,
-        complement: address.complement,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zipCode
-    }
-
+    const newAddressObject = addressesRepository.create(
+        addressRequest
+    )
+    
     const newAddress = await addressesRepository.save(newAddressObject);
+    console.log(newAddressObject)
 
     const hashedPassword = await hash(password, 10);
     const user = userRepository.create({
