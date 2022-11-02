@@ -6,7 +6,7 @@ export class Classification {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ length: 10 })
+  @Column({ length: 50, unique: true })
   name: string;
 
   @OneToMany(() => Donation, (donation) => donation.classification)
