@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IClassificationRequest } from "../../interfaces/classifications.interface";
 import { deleteClassificationService } from "../../services/classifications/deleteClassification.service";
 
 const deleteClassificationController = async (req: Request, res: Response) => {
