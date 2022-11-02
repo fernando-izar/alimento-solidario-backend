@@ -8,7 +8,6 @@ import { compileFunction } from "vm";
 import { Address } from "../../entities/address.entity";
 
 const updateUSerService = async ({email, password, name, cnpj_cpf, responsible, contact, address: addressRequest}: IUserUpdate, id: string): Promise<User> => {
-    console.log(email, password, name, cnpj_cpf, responsible, contact)
     const userRepository = AppDataSource.getRepository(User);
     const addressRepository = AppDataSource.getRepository(Address);
 
@@ -22,9 +21,9 @@ const updateUSerService = async ({email, password, name, cnpj_cpf, responsible, 
     })
 
     if(!findUser) {
-        throw new AppError("User not found!", 404)
+        throw new AppError("Invalid id!", 404)
     }
-    console.log(findUser.address.address)
+
     const newAddressObject = {
         address: addressRequest?.address ? addressRequest.address : findUser.address.address,
         complement: addressRequest?.complement ? addressRequest.complement : findUser.address.complement,
@@ -39,7 +38,6 @@ const updateUSerService = async ({email, password, name, cnpj_cpf, responsible, 
         id: newAddress.id,
     })
 
-    console.log(newAddress, email)
     await userRepository.update(
         id,
         {
@@ -55,7 +53,7 @@ const updateUSerService = async ({email, password, name, cnpj_cpf, responsible, 
     await addressRepository.update(
         findAddress!.id, newAddressObject
     )
-        console.log("Ola")
+
     const updatedUser = await userRepository.findOneBy({
         id
     })

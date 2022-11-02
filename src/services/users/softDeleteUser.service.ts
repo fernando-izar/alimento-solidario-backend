@@ -9,7 +9,7 @@ const softDeleteUserService = async (id: string) => {
     })
 
     if (!findUser?.isActive) {
-        throw new AppError("User not found!")
+        throw new AppError("User already deleted!")
     }
 
     const softDeletedUSer = await userRepository.update(
