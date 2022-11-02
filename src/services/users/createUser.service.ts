@@ -1,9 +1,9 @@
 import AppDataSource from "../../data-source";
-import { IUserRequest } from "../../interfaces/users";
 import { hash } from "bcrypt";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Address } from "../../entities/address.entity";
+import { IUserRequest } from "../../interfaces/users";
 
 const createUserService = async ({email, password, name, cnpj_cpf, address: addressRequest, responsible, contact, type, isAdm}: IUserRequest): Promise<User> => {
     const userRepository = AppDataSource.getRepository(User);
@@ -17,6 +17,12 @@ const createUserService = async ({email, password, name, cnpj_cpf, address: addr
         throw new AppError("E-mail already exists!")
     }
 
+    const cnpjCpfAlreadyExists = users.find(user => user.cnpj_cpf === cnpj_cpf);
+
+    if (cnpjCpfAlreadyExists) {
+        throw new AppError("CNPJ/CPF already exists!")
+    }
+
     if (!password) {
         throw new AppError("Password is missing!")
     }
@@ -24,10 +30,6 @@ const createUserService = async ({email, password, name, cnpj_cpf, address: addr
     const addressAlreadyExists = await addressesRepository.findOneBy({
         address: addressRequest.address,
         complement: addressRequest.complement,
-        city: addressRequest.city,
-        state: addressRequest.state,    
-        zipCode: addressRequest.zipCode
-        
     })
 
     if (addressAlreadyExists) {

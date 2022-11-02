@@ -1,4 +1,4 @@
-import { IAddressRequest } from "../addresses"
+import { IAddressRequest, IAddressUpdate } from "../addresses"
 
 export interface IUserRequest {
     email: string
@@ -24,4 +24,5 @@ export interface IUserUpdate {
     cnpj_cpf?: string
     responsible?: string
     contact?: string
+    address?: IAddressUpdate
 }
