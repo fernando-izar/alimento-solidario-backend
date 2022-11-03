@@ -11,7 +11,7 @@ const showDonationsByIdService = async (id: string): Promise<Donation> => {
   });
 
   if (!donationFound) {
-    throw new AppError("User not found!");
+    throw new AppError("Donation not found!");
   }
 
   return donationFound;
