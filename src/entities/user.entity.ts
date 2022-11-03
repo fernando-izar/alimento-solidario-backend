@@ -41,7 +41,7 @@ export class User {
   @Column()
   isAdm: boolean;
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, {eager: true, onDelete: "CASCADE"})
   @JoinColumn()
   address: Address;
 
@@ -50,4 +50,7 @@ export class User {
 
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
+
+  @Column({default: true})
+  isActive: boolean
 }
