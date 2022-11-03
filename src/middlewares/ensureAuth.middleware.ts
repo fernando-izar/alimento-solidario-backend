@@ -22,6 +22,7 @@ const ensureAuthMiddleware =async (req: Request, res: Response, next: NextFuncti
             }
 
             req.user = {
+                type: decoded.type,
                 isAdm: decoded.isAdm,
                 id: decoded.sub
             }

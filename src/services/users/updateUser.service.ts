@@ -1,11 +1,9 @@
 import AppDataSource from "../../data-source";
 import { User } from "../../entities/user.entity";
-import { IUserUpdate } from "../../interfaces/users";
-import { IAddressUpdate } from "../../interfaces/addresses";
 import { hash } from "bcrypt";
 import AppError from "../../errors/appError";
-import { compileFunction } from "vm";
 import { Address } from "../../entities/address.entity";
+import { IUserUpdate } from "../../interfaces/users.interface";
 
 const updateUSerService = async ({email, password, name, cnpj_cpf, responsible, contact, address: addressRequest}: IUserUpdate, id: string): Promise<User> => {
     const userRepository = AppDataSource.getRepository(User);

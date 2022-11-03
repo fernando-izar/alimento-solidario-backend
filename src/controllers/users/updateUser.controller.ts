@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IUserUpdate } from "../../interfaces/users";
 import updateUSerService from "../../services/users/updateUser.service";
 
 const updateUserController = async (req: Request, res: Response) => {

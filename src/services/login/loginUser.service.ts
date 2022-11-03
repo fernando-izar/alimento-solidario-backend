@@ -4,7 +4,7 @@ import AppError from "../../errors/appError";
 import { compareSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { IUserLogin } from "../../interfaces/users";
+import { IUserLogin } from "../../interfaces/users.interface";
 
 const loginUserService = async ({ email, password }: IUserLogin) => {
   const userRepository = AppDataSource.getRepository(User);
@@ -24,11 +24,12 @@ const loginUserService = async ({ email, password }: IUserLogin) => {
   }
 
   const token = jwt.sign(
-    { isAdm: user.isAdm },
+    { isAdm: user.isAdm,
+      type: user.type },
     process.env.SECRET_KEY as string,
     {
       expiresIn: "24h",
-      subject: user.id,
+      subject: user.id
     }
   );
   return token;

@@ -3,7 +3,7 @@ import { hash } from "bcrypt";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Address } from "../../entities/address.entity";
-import { IUserRequest } from "../../interfaces/users";
+import { IUserRequest } from "../../interfaces/users.interface";
 
 const createUserService = async ({email, password, name, cnpj_cpf, address: addressRequest, responsible, contact, type, isAdm}: IUserRequest): Promise<User> => {
     const userRepository = AppDataSource.getRepository(User);
