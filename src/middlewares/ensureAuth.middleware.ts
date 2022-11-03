@@ -4,10 +4,9 @@ import "dotenv/config";
 
 const ensureAuthMiddleware =async (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization;
-
     if(!token) {
         return res.status(401).json({
-            message: "Invalid token!"
+            message: "Authentication required!"
         })
     }
 
@@ -23,6 +22,7 @@ const ensureAuthMiddleware =async (req: Request, res: Response, next: NextFuncti
             }
 
             req.user = {
+                type: decoded.type,
                 isAdm: decoded.isAdm,
                 id: decoded.sub
             }
