@@ -1,5 +1,4 @@
 //import appdataSource, entidade Reservations, interface de request
-import { v4 as uuid } from "uuid";
 import IReservationRequest from "../../interfaces/reservations";
 
 const createReservationService = async ({
@@ -19,7 +18,6 @@ const createReservationService = async ({
   //
 
   const newReservation = reservationsRepository.create({
-    id: uuid(),
     donation: donation,
     //sugestão: nome do donatário e doador
   });
