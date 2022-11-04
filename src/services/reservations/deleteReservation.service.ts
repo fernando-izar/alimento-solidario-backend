@@ -1,6 +1,5 @@
 import AppDataSource from "../../data-source";
 import { Reservation } from "../../entities/reservations.entity";
-import { User } from "../../entities/user.entity";
 import AppError from "../../errors/appError";
 
 const deleteReservationService = async (id: string, userId: string): Promise<void> => {
@@ -23,9 +22,6 @@ const deleteReservationService = async (id: string, userId: string): Promise<voi
   }
 
   throw new AppError("You can't delete donation from another user", 403)
-  //checagem pra ver se o user criou
-
-  //await repo.delete()
 };
 
 export default deleteReservationService;
