@@ -14,10 +14,12 @@ const showReservationsService = async (userId: string): Promise<Reservation[]> =
     where: {
       user: {
         id: user?.id
-      }
+      }      
     },
     relations: {
-      donation: true
+      donation: {
+        user: true
+      }
     }
   });
 
