@@ -5,7 +5,7 @@ import showUserByIdService from "../../services/users/showUserById.service";
 const showUserByIdController = async (req: Request, res: Response) => {
     const userIdFound = req.params.id
     const userFound = await showUserByIdService(userIdFound);
-    return res.json(instanceToPlain(userFound));
+    return res.status(403).json(instanceToPlain(userFound));
 };
 
 export default showUserByIdController;

@@ -4,7 +4,6 @@ import IDonationRequest from "../../interfaces/donations.interface";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Classification } from "../../entities/classifications.entity";
-import { instanceToPlain } from "class-transformer";
 
 const createDonationService = async (
   { food, quantity, expiration, classification }: IDonationRequest,
