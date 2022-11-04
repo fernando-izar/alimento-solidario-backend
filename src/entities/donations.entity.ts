@@ -22,8 +22,8 @@ export class Donation {
   @Column({ length: 30 })
   quantity: string;
 
-  @Column()
-  expiration: Date;
+  @Column({ type: "date" })
+  expiration: string;
 
   @Column({ default: true })
   available: boolean;
