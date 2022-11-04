@@ -1,6 +1,6 @@
 import AppDataSource from "../../data-source";
 import { Donation } from "../../entities/donations.entity";
-import IDonationRequest from "../../interfaces/donations";
+import IDonationRequest from "../../interfaces/donations.interface";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Classification } from "../../entities/classifications.entity";
@@ -32,7 +32,7 @@ const createDonationService = async (
     food,
     quantity,
     expiration,
-    classification: classificationOfDonation, //pq tá dando erro?
+    classification: classificationOfDonation,
     user: donator,
   };
 

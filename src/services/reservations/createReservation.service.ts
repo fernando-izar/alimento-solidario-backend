@@ -1,7 +1,7 @@
 import AppDataSource from "../../data-source";
 import { Reservation } from "../../entities/reservations.entity";
 import { Donation } from "../../entities/donations.entity";
-import IReservationRequest from "../../interfaces/reservations";
+import IReservationRequest from "../../interfaces/reservations.interface";
 import { User } from "../../entities/user.entity";
 import AppError from "../../errors/appError";
 

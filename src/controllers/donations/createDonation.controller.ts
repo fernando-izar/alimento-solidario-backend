@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import IDonationRequest from "../../interfaces/donations";
+import IDonationRequest from "../../interfaces/donations.interface";
 import createDonationService from "../../services/donations/createDonation.service";
 
 const createDonationController = async (req: Request, res: Response) => {
