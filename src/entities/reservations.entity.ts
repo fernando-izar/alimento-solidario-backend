@@ -1,5 +1,5 @@
 import {
-  Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -14,9 +14,12 @@ export class Reservation {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @CreateDateColumn()
+  date: Date;
+
   @OneToOne(() => Donation)
   @JoinColumn()
-  donation: string;
+  donation: Donation;
 
   @ManyToOne(() => User)
   user: User;
