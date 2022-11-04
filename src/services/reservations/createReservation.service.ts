@@ -1,29 +1,30 @@
-//import appdataSource, entidade Reservations, interface de request
+import AppDataSource from "../../data-source";
+import { Reservation } from "../../entities/reservations.entity";
+import { Donation } from "../../entities/donations.entity";
 import IReservationRequest from "../../interfaces/reservations";
+import { User } from "../../entities/user.entity";
+import AppError from "../../errors/appError";
 
 const createReservationService = async ({
   donationId,
 }: IReservationRequest) => {
-  //const userRepository
-  // const reservationsRepository
-  // const donation
-  //
-  //checagem de tipo de usuario tentando fazer a reserva é feita por middleware
-  //
-  //if (!reservation.available){
-  //retornar AppError("This donation is already gone", 404)
-  //}
-  //
-  //checagem de data
-  //
+  const reservationsRepository = AppDataSource.getRepository(Reservation);
+  const donationsRepository = AppDataSource.getRepository(Donation);
+  const userRepository = AppDataSource.getRepository(User);
 
-  const newReservation = reservationsRepository.create({
-    donation: donation,
-    //sugestão: nome do donatário e doador
-  });
+  //encontrar usuário através da req.user(?)
+  //const userId = await userRepository.findOneBy({ id: user });
+  const donation = await donationsRepository.findOneBy({ id: donationId });
+  //const newReservation = reservationsRepository.create({ donation });
 
-  await reservationsRepository.save(newReservation);
-  return newReservation;
+  //verificacoes
+  if (!donation?.available) {
+    throw new AppError("This donation is not avaiable anymore.");
+  }
+  //data
+
+  //await reservationsRepository.save(newReservation);
+  //return newReservation;
 };
 
 export default createReservationService;
