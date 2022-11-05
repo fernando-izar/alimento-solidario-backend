@@ -8,15 +8,16 @@ import softDeleteUserController from "../controllers/users/softDeleteUser.contro
 import updateUserController from "../controllers/users/updateUser.controller";
 import ensureAuthMiddleware from "../middlewares/ensureAuth.middleware";
 import ensureIsAdmMiddleware from "../middlewares/ensureIsAdm.middleware";
+import validationBodyPatchMiddleware from "../middlewares/validationBodyPatch.middleware";
 
 const userRoutes = Router();
 
 userRoutes.post("", createUserController);
 userRoutes.get("", ensureAuthMiddleware, ensureIsAdmMiddleware, listUsersController);
 userRoutes.get("/profile", ensureAuthMiddleware, showUserLoggedController);
-userRoutes.get("/:id", ensureAuthMiddleware, ensureIsAdmMiddleware,showUserByIdController);
-userRoutes.patch("/:id", ensureAuthMiddleware, ensureIsAdmMiddleware, updateUserController);
-userRoutes.delete("", ensureAuthMiddleware, ensureIsAdmMiddleware, softDeleteUserController);
+userRoutes.get("/:id", ensureAuthMiddleware, ensureIsAdmMiddleware, showUserByIdController);
+userRoutes.patch("/:id", ensureAuthMiddleware, ensureIsAdmMiddleware, validationBodyPatchMiddleware, updateUserController);
+userRoutes.delete("/soft/:id", ensureAuthMiddleware, ensureIsAdmMiddleware, softDeleteUserController);
 userRoutes.delete("/:id", ensureAuthMiddleware, ensureIsAdmMiddleware, deleteUserController);
 
 export default userRoutes;

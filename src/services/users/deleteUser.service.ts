@@ -9,6 +9,11 @@ const deleteUserService = async (id: string) => {
     const findUser = await userRepository.findOneBy({
         id
     })
+
+    if(!findUser) {
+        throw new AppError("Invalid id!", 404)
+    }
+    
     const addressId = findUser?.address.id
 
     if (!findUser) {
