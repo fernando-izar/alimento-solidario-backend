@@ -17,8 +17,7 @@ const deleteReservationService = async (id: string, userId: string): Promise<voi
   if (!reservation) {
     throw new AppError("Reservation not found", 404);
   }
-  console.log(reservation)
-
+  
   if (reservation.user.id === userId){
     await reservationRepository.delete({
       id: reservation.id
