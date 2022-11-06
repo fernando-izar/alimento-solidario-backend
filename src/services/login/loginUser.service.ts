@@ -10,7 +10,7 @@ const loginUserService = async ({ email, password }: IUserLogin) => {
   const userRepository = AppDataSource.getRepository(User);
 
   const user = await userRepository.findOneBy({
-    email: email
+    email: email,
   });
 
   if (!user) {
@@ -24,15 +24,14 @@ const loginUserService = async ({ email, password }: IUserLogin) => {
   }
 
   const token = jwt.sign(
-    { isAdm: user.isAdm,
-      type: user.type },
+    { isAdm: user.isAdm, type: user.type },
     process.env.SECRET_KEY as string,
     {
       expiresIn: "24h",
-      subject: user.id
+      subject: user.id,
     }
   );
-  return token;
+  return { user, token };
 };
 
 export default loginUserService;
