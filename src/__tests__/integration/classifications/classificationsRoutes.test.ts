@@ -141,7 +141,7 @@ describe("/classifications", () => {
       .send(mockedClassification2);
 
     expect(response.body).toHaveProperty("message");
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(401);
   });
 
   test("PATCH /classifications -  Must be able to update classification", async () => {
