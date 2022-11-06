@@ -259,7 +259,7 @@ describe('/users', () => {
         expect(response.status).toBe(401);
     })
 
-    test("PATCH /users/:id -> should not be able to update user with invalid id 404", async () => {
+    test("PATCH /users/:id -> should not be able to update user with invalid id 403", async () => {
         await request(app).post("/users").send(userAdmDonorData);
         
         const newKeysValues = {name: "Paulo Coelho", email: "paulocoelho@mail.com"}
@@ -273,7 +273,7 @@ describe('/users', () => {
         const response = await request(app).patch(`/users/a78sw12y-3uy7-78sd-239v-12qub3e4hj89`).set("Authorization",token).send(newKeysValues)
 
         expect(response.body).toHaveProperty("message")
-        expect(response.status).toBe(404)
+        expect(response.status).toBe(403)
     })
 
     test("PATCH /users/:id -> should not be able to update isAdm field value 401", async () => {
@@ -326,13 +326,13 @@ describe('/users', () => {
     test("PATCH /users/:id -> should not be able to update another user without adm permission 401", async () => {
         const newKeyValue = {contact: "Roberta"}
 
-        const userLoginResponse = await request(app).post("/login").send(userNotAdmDonorDataLogin);
         const admingLoginResponse = await request(app).post("/login").send(userAdmDonorDataLogin);
-        const userToken = `Bearer ${userLoginResponse.body.token}`
+        const userLoginResponse = await request(app).post("/login").send(userNotAdmDonorDataLogin);
         const adminToken = `Bearer ${admingLoginResponse.body.token}`
+        const userToken = `Bearer ${userLoginResponse.body.token}`
         
         const userTobeUpdateRequest = await request(app).get("/users").set("Authorization", adminToken)
-        const userTobeUpdateId = userTobeUpdateRequest.body[1].id
+        const userTobeUpdateId = userTobeUpdateRequest.body[0].id
 
         const response = await request(app).patch(`/users/${userTobeUpdateId}`).set("Authorization",userToken).send(newKeyValue)
 
