@@ -6,7 +6,7 @@ import { User } from "../../entities/user.entity";
 import { Classification } from "../../entities/classifications.entity";
 
 const createDonationService = async (
-  { food, quantity, expiration, classification }: IDonationRequest,
+  { food, quantity, expiration, classificationId }: IDonationRequest,
   user: any
 ) => {
   const donationRepository = AppDataSource.getRepository(Donation);
@@ -14,7 +14,7 @@ const createDonationService = async (
   const classificationRepository = AppDataSource.getRepository(Classification);
 
   const classificationOfDonation = await classificationRepository.findOneBy({
-    id: classification,
+    id: classificationId,
   });
 
   const donator = await userRepository.findOneBy({ id: user.id });
