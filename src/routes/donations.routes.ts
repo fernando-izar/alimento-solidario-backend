@@ -3,6 +3,7 @@ import createDonationController from "../controllers/donations/createDonation.co
 import listDonationsController from "../controllers/donations/listDonations.controller";
 import listDonationsExpandUserController from "../controllers/donations/listDonationsExpandUser.controller";
 import listDonationsFromUserController from "../controllers/donations/listDonationsFromUser.controller";
+import updateDonationController from "../controllers/donations/updateDonation.controller";
 import ensureAuthMiddleware from "../middlewares/ensureAuth.middleware";
 const donationsRoutes = Router();
 
@@ -14,5 +15,6 @@ donationsRoutes.get(
   ensureAuthMiddleware,
   listDonationsFromUserController
 );
+donationsRoutes.patch("/:id", ensureAuthMiddleware, updateDonationController);
 
 export default donationsRoutes;
