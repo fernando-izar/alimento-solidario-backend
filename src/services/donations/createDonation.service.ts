@@ -1,6 +1,6 @@
 import AppDataSource from "../../data-source";
 import { Donation } from "../../entities/donations.entity";
-import IDonationRequest from "../../interfaces/donations.interface";
+import { IDonationRequest } from "../../interfaces/donations.interface";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Classification } from "../../entities/classifications.entity";
