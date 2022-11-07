@@ -11,8 +11,13 @@ const deleteDonationService = async (donationId: string, userId: string): Promis
         id: userId
     })
 
-    const donation = await donationsRepository.findOneBy({
-        id: donationId
+    const donation = await donationsRepository.findOne({
+        where: {
+            id: donationId
+        }, 
+        relations: {
+            user: true
+        }
     })
 
     if(!donation){
