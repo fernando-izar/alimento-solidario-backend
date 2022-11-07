@@ -14,8 +14,13 @@ const deleteDonationService = async (
     id: userId,
   });
 
-  const donation = await donationsRepository.findOneBy({
-    id: donationId,
+  const donation = await donationsRepository.findOne({
+    where: {
+      id: donationId,
+    },
+    relations: {
+      user: true,
+    },
   });
 
   if (!donation) {
@@ -33,7 +38,9 @@ const deleteDonationService = async (
     );
   }
 
-  await donationsRepository.delete(donationId);
+  await donationsRepository.delete({
+    id: donation.id,
+  });
 
   return;
 };
