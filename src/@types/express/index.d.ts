@@ -1,4 +1,5 @@
 import * as express from "express"
+import { IDonationUpdate } from "../../interfaces/donations"
 
 declare global {
     namespace Express {
@@ -8,6 +9,7 @@ declare global {
                 isAdm: boolean,
                 type: string
             }
+            updateDonation: IDonationUpdate
         }
     }
 }

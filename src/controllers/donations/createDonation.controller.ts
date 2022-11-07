@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import IDonationRequest from "../../interfaces/donations.interface";
+import { IDonationRequest } from "../../interfaces/donations.interface";
 import createDonationService from "../../services/donations/createDonation.service";
 import { instanceToPlain } from "class-transformer";
 
