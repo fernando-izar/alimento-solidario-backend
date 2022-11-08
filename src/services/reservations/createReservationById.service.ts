@@ -1,4 +1,3 @@
-
 import AppDataSource from "../../data-source";
 import { Reservation } from "../../entities/reservations.entity";
 import { Donation } from "../../entities/donations.entity";
@@ -6,8 +5,8 @@ import IReservationRequest from "../../interfaces/reservations.interface";
 import { User } from "../../entities/user.entity";
 import AppError from "../../errors/appError";
 
-const createReservationService = async (
-  { donationId }: IReservationRequest,
+const createReservationByIdService = async (
+  donationId: string,
   userId: string
 ): Promise<Reservation> => {
   const reservationsRepository = AppDataSource.getRepository(Reservation);
@@ -17,6 +16,7 @@ const createReservationService = async (
   //encontrar usuário através da req.user(?)
   const user = await userRepository.findOneBy({ id: userId });
   const donation = await donationsRepository.findOneBy({ id: donationId });
+  console.log("donation", donation);
 
   if (!user) throw new AppError("User ID not found", 404);
   if (!donation) throw new AppError("Donation ID not found", 404);
@@ -24,7 +24,7 @@ const createReservationService = async (
 
   //verificacoes
   if (!donation.available) {
-    throw new AppError("This donation is not avaiable anymore");
+    throw new AppError("This donation is not avaiable anymore.");
   }
 
   await donationsRepository.update(donationId, { available: false });
@@ -39,4 +39,4 @@ const createReservationService = async (
   return newReservation;
 };
 
-export default createReservationService;
+export default createReservationByIdService;

@@ -1,13 +1,12 @@
 import AppDataSource from "../../data-source";
 import { Donation } from "../../entities/donations.entity";
-import IDonationRequest from "../../interfaces/donations.interface";
+import { IDonationRequest } from "../../interfaces/donations.interface";
 import AppError from "../../errors/appError";
 import { User } from "../../entities/user.entity";
 import { Classification } from "../../entities/classifications.entity";
-import { instanceToPlain } from "class-transformer";
 
 const createDonationService = async (
-  { food, quantity, expiration, classification }: IDonationRequest,
+  { food, quantity, expiration, classificationId }: IDonationRequest,
   user: any
 ) => {
   const donationRepository = AppDataSource.getRepository(Donation);
@@ -15,7 +14,7 @@ const createDonationService = async (
   const classificationRepository = AppDataSource.getRepository(Classification);
 
   const classificationOfDonation = await classificationRepository.findOneBy({
-    id: classification,
+    id: classificationId,
   });
 
   const donator = await userRepository.findOneBy({ id: user.id });

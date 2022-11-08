@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import "dotenv/config";
+import { User } from "./entities/user.entity";
 
 const AppDataSource = new DataSource(
   process.env.NODE_ENV === "test"
@@ -7,7 +8,8 @@ const AppDataSource = new DataSource(
         type: "sqlite",
         database: ":memory:",
         synchronize: true,
-        entities: ["src/entities/.ts"],
+        entities: ["src/entities/*.ts"],
+
       }
     : {
         type: "postgres",
@@ -18,6 +20,7 @@ const AppDataSource = new DataSource(
             : false,
         logging: true,
         synchronize: false,
+
         entities:
           process.env.NODE_ENV === "production"
             ? ["dist/entities/*.js"]
@@ -26,6 +29,7 @@ const AppDataSource = new DataSource(
           process.env.NODE_ENV === "production"
             ? ["dist/migrations/*.js"]
             : ["src/migrations/*.ts"],
+
       }
 );
 

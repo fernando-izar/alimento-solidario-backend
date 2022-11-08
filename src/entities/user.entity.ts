@@ -27,6 +27,7 @@ export class User {
   name: string;
 
   @Column({ unique: true, length: 18 })
+  @Exclude()
   cnpj_cpf: string;
 
   @Column({ length: 100 })
@@ -41,7 +42,7 @@ export class User {
   @Column()
   isAdm: boolean;
 
-  @OneToOne(() => Address, {eager: true, onDelete: "CASCADE"})
+  @OneToOne(() => Address, { eager: true, onDelete: "CASCADE" })
   @JoinColumn()
   address: Address;
 
@@ -51,6 +52,6 @@ export class User {
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
 
-  @Column({default: true})
-  isActive: boolean
+  @Column({ default: true })
+  isActive: boolean;
 }
