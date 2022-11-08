@@ -6,6 +6,7 @@ import createReservationService from "../../services/reservations/createReservat
 const createReservationController = async (req: Request, res: Response) => {
   const newReservation: IReservationRequest = req.body;
   const userId = req.user.id;
+  console.log(newReservation, userId);
   const createReservation = await createReservationService(
     newReservation,
     userId
