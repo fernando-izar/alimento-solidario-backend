@@ -12,7 +12,12 @@ import ensureIsDonor from "../middlewares/ensureIsDonor.middleware";
 import showDonationsByIdExpandUserService from "../services/donations/showDonationsByIdExpandUser.service";
 const donationsRoutes = Router();
 
-donationsRoutes.post("", ensureAuthMiddleware, createDonationController); //colocar middleware de verificacao de tipo
+donationsRoutes.post(
+  "",
+  ensureAuthMiddleware,
+  ensureIsDonor,
+  createDonationController
+); //colocar middleware de verificacao de tipo
 donationsRoutes.get("", listDonationsController);
 donationsRoutes.get("/expand", listDonationsExpandUserController);
 donationsRoutes.get(
@@ -22,7 +27,12 @@ donationsRoutes.get(
 );
 donationsRoutes.get("/:id", showDonationsByIdController);
 donationsRoutes.get("/expand/:id", showDonationsByIdExpandUserController);
-donationsRoutes.delete("/:id", ensureAuthMiddleware, ensureIsDonor, deleteDonationController);
+donationsRoutes.delete(
+  "/:id",
+  ensureAuthMiddleware,
+  ensureIsDonor,
+  deleteDonationController
+);
 donationsRoutes.patch("/:id", ensureAuthMiddleware, updateDonationController);
 
 export default donationsRoutes;
