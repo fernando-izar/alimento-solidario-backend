@@ -9,15 +9,19 @@ import request from "supertest";
 import {
   mockedAdminDonor,
   mockedAdminDonorLogin,
-  mockedDonationInfo,
+  mockedDonationInfoToDelete,
+  mockedDonationInfoToCreate,
   mockedUserCharity,
   mockedUserCharityLogin,
+  mockedUserCharity2,
+  mockedUserCharityLogin2,
 } from "../../mocks/reservationsTest.mocks";
 import { IDonationRequest } from "../../../interfaces/donations.interface";
-import { Classification } from "../../../entities/classifications.entity";
 
 describe("/reservations", () => {
   let connection: DataSource;
+
+  const reservations: any = [];
 
   beforeAll(async () => {
     await AppDataSource.initialize()
@@ -30,6 +34,7 @@ describe("/reservations", () => {
 
     await request(app).post("/users").send(mockedAdminDonor);
     await request(app).post("/users").send(mockedUserCharity);
+    await request(app).post("/users").send(mockedUserCharity2);
     const adminLoginResponse = await request(app)
       .post("/login")
       .send(mockedAdminDonorLogin);
@@ -47,17 +52,26 @@ describe("/reservations", () => {
       .get("/classifications")
       .set("Authorization", `Bearer ${adminLoginResponse.body.token}`);
 
-    const donation: IDonationRequest = {
-      ...mockedDonationInfo,
+    const donation1: IDonationRequest = {
+      ...mockedDonationInfoToDelete,
+      classificationId: classifications[0].id,
+    };
+
+    const donation2: IDonationRequest = {
+      ...mockedDonationInfoToCreate,
       classificationId: classifications[0].id,
     };
 
     await request(app)
       .post("/donations")
       .set("Authorization", `Bearer ${adminLoginResponse.body.token}`)
-      .send(donation);
-  });
+      .send(donation1);
 
+    await request(app)
+      .post("/donations")
+      .set("Authorization", `Bearer ${adminLoginResponse.body.token}`)
+      .send(donation2);
+  });
   afterAll(async () => {
     await connection.destroy();
   });
@@ -98,21 +112,21 @@ describe("/reservations", () => {
       .post("/login")
       .send(mockedAdminDonorLogin);
 
-    // const { body: donations } = await request(app).get("/donations");
+    const { body: donations } = await request(app).get("/donations");
 
-    // const marimba = await request(app)
-    //   .delete("/donations/" + donations[0].id)
-    //   .set("Authorization", `Bearer ${adminDonorLoginReponse.body.token}`);
+    const marimba = await request(app)
+      .delete("/donations/" + donations[0].id)
+      .set("Authorization", `Bearer ${adminDonorLoginReponse.body.token}`);
 
-    // const { body: donationsterte } = await request(app).get("/donations");
+    const { body: donationsterte } = await request(app).get("/donations");
 
-    // console.log("donations", donationsterte);
-    // console.log("erro", marimba.error);
+    console.log("donations", donationsterte);
+    console.log("erro", marimba.error);
 
     const response = await request(app)
       .post("/reservations")
       .set("Authorization", `Bearer ${userLoginResponse.body.token}`)
-      .send({ donationId: "e3a4728b-3aee-4e0e-b5e6-ecb981fc0773" });
+      .send({ donationId: donations[0].id });
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message");
@@ -135,5 +149,81 @@ describe("/reservations", () => {
     expect(response.body).toHaveProperty("date");
     expect(response.body).toHaveProperty("donation");
     expect(response.body).toHaveProperty("user");
+
+    reservations.push(response.body);
+  });
+
+  test("POST /reservations - Should not be able to create reservation that already exists", async () => {
+    const userLoginResponse = await request(app)
+      .post("/login")
+      .send(mockedUserCharityLogin);
+
+    const { body: donations } = await request(app).get("/donations");
+
+    const response = await request(app)
+      .post("/reservations")
+      .set("Authorization", `Bearer ${userLoginResponse.body.token}`)
+      .send({ donationId: donations[0].id });
+
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("GET /reservations/user - Must be able to show reservations from user logged", async () => {
+    const userCharityLoginReponse = await request(app)
+      .post("/login")
+      .send(mockedUserCharityLogin);
+
+    const response = await request(app)
+      .get("/reservations/user")
+      .set("Authorization", `Bearer ${userCharityLoginReponse.body.token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].id).toBe(reservations[0].id);
+  });
+
+  test("GET /reservations/user - Should not be able to show reservations from user without authentication", async () => {
+    const response = await request(app).get("/reservations/user");
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("DELETE /reservations/:id - Should not be able to delete reservation without authentication", async () => {
+    const response = await request(app).delete(
+      "/reservations/" + reservations[0].id
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("DELETE /reservations/:id - Should not be able to delete reservation if user is not the reservation creator", async () => {
+    const wrongUserCharityLoginResponse = await request(app)
+      .post("/login")
+      .send(mockedUserCharityLogin2);
+
+    const response = await request(app)
+      .delete("/reservations/" + reservations[0].id)
+      .set(
+        "Authorization",
+        `Bearer ${wrongUserCharityLoginResponse.body.token}`
+      );
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+  });
+
+  test("DELETE /reservations/:id - Must be able to delete reservation", async () => {
+    const userCharityLoginReponse = await request(app)
+      .post("/login")
+      .send(mockedUserCharityLogin);
+
+    const response = await request(app)
+      .delete("/reservations/" + reservations[0].id)
+      .set("Authorization", `Bearer ${userCharityLoginReponse.body.token}`);
+
+    expect(response.status).toBe(204);
+    expect(response.body).not.toHaveProperty("message");
   });
 });

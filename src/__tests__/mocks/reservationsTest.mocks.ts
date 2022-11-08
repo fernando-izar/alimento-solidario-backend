@@ -36,6 +36,24 @@ export const mockedUserCharity: IUserRequest = {
   isAdm: false,
 };
 
+export const mockedUserCharity2: IUserRequest = {
+  email: "charity@mail.com",
+  password: "12345",
+  name: "charity",
+  cnpj_cpf: "22222222222",
+  address: {
+    address: "rua um",
+    complement: "apto 989",
+    city: "Aleluia",
+    state: "RS",
+    zipCode: "12345665",
+  },
+  responsible: "José",
+  contact: "Maria",
+  type: "charity",
+  isAdm: false,
+};
+
 export const mockedAdminDonorLogin: IUserLogin = {
   email: "charity@mail.com",
   password: "1234",
@@ -46,8 +64,19 @@ export const mockedUserCharityLogin: IUserLogin = {
   password: "123456",
 };
 
-export const mockedDonationInfo = {
+export const mockedUserCharityLogin2: IUserLogin = {
+  email: "charity@mail.com",
+  password: "12345",
+};
+
+export const mockedDonationInfoToDelete = {
   food: "comida de pato",
   quantity: "10 sacos grandes",
+  expiration: "30/11/2022",
+};
+
+export const mockedDonationInfoToCreate = {
+  food: "pele de jacaré",
+  quantity: "2 baldes",
   expiration: "30/11/2022",
 };
