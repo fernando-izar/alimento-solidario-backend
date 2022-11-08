@@ -8,6 +8,7 @@ declare global {
                 id: string,
                 isAdm: boolean,
                 type: string,
+                email: string,
             }
             updateDonation: IDonationUpdate
         }
