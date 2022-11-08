@@ -5,6 +5,8 @@ import AppDataSource from "../../../data-source";
 import { IDonationRequest } from "../../../interfaces/donations.interface";
 import {
   donationMock,
+  donationMock6,
+  donationMock7,
   donationMockNo2,
   donationMockNo3,
   donationMockNo4,
@@ -12,14 +14,20 @@ import {
   expiratedDonationMock,
 } from "../../mocks/donationsRoutes.mocks";
 import {
+  userAdmCharityData,
+  userAdmCharityDataSession,
   userAdmDonorData,
   userAdmDonorDataLogin,
+  userLoginDonor,
+  userLoginDonorSession,
   userNotAdmCharityData,
   userNotAdmDonorData,
   userNotAdmDonorDataLogin,
+  userTestDonorData,
 } from "../../mocks/userRoutes.mocks";
-import { mockedClassification1 } from "../../mocks/classificationsTest.mocks";
+import { mockedClassification1, mockedClassification4, mockedClassification5 } from "../../mocks/classificationsTest.mocks";
 import { Donation } from "../../../entities/donations.entity";
+import { create } from "domain";
 
 describe("/donations", () => {
   let connection: DataSource;
@@ -114,7 +122,6 @@ describe("/donations", () => {
       .send(expiratedDonationMock)
       .set("Authorization", `Bearer ${loginAdmResponse.body.token}`);
     expect(resultDonation.status).toBe(403);
-    console.log(resultDonation.body);
     expect(resultDonation.body).toHaveProperty("message");
   });
 
@@ -195,4 +202,137 @@ describe("/donations", () => {
     expect(result.status).toBe(404);
     expect(result.body).toHaveProperty("message");
   });
+
+  test("DELETE /donations/:id -> Must be able to delete donation", async () => {
+    const loginAdm = await request(app)
+      .post("/login")
+      .send(userAdmDonorDataLogin);
+
+    const donation = await request(app)
+      .get("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const response = await request(app)
+      .delete(`/donations/${donation.body[0].id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const findDonation = await request(app)
+      .get("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const donationNotDeleted = findDonation.body.some(
+      (d: any) => d.id === donation.body[0].id
+    );
+
+    expect(response.status).toBe(204);
+    expect(donationNotDeleted).toBe(false);
+  });
+  
+  test("DELETE /donations/:id -> Should not be able to delete donations without authentications", async () => {
+    const loginAdm = await request(app)
+      .post("/login")
+      .send(userAdmDonorDataLogin);
+
+    const donations = await request(app)
+      .get("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const response = await request(app)
+      .delete(`/donations/${donations.body[0].id}`
+    );
+
+    const findDonation = await request(app)
+      .get("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const donationNotDeleted = findDonation.body.some(
+      (d: any) => d.id === donations.body[0].id
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(donationNotDeleted).toBe(true);
+  })
+
+  test("DELETE /donations/:id -> Should not be able to delete donation if user is not the donation creator", async () => {
+    const createdAdm = await request(app)
+    .post("/users")
+    .send(userLoginDonor)
+    
+    const loginAdm = await request(app)
+    .post("/login")
+    .send(userLoginDonorSession);
+
+    const createClassification = await request(app)
+    .post("/classifications")
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+    .send(mockedClassification4);
+    donationMock6.classification = createClassification.body.id;
+
+    const createdDonation = await request(app)
+    .post("/donations")
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+    .send(donationMock6);
+
+    const loginDonorNotCreator = await request(app)
+    .post("/login")
+    .send(userAdmDonorData);
+
+    const response = await request(app)
+    .delete(`/donations/${createdDonation.body.id}`)
+    .set("Authorization", `Bearer ${loginDonorNotCreator.body.token}`);
+
+    const notCreatorOfDonation = createdDonation.body.user.id !== loginDonorNotCreator.body.id
+    
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty("message");
+    expect(notCreatorOfDonation).toBe(true);
+  });
+
+  test("DELETE /donations/:id -> Should not be able to delete donation if the donation is not available", async () => {
+    const createdAdm = await request(app)
+    .post("/users")
+    .send(userLoginDonor)
+    
+    const loginAdm = await request(app)
+    .post("/login")
+    .send(userLoginDonorSession);
+
+    const createClassification = await request(app)
+    .post("/classifications")
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+    .send(mockedClassification5);
+    donationMock7.classification = createClassification.body.id;
+
+    const createdDonation = await request(app)
+    .post("/donations")
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+    .send(donationMock7);
+
+    const createCharity = await request(app)
+    .post("/users")
+    .send(userAdmCharityData)
+
+    const charityLogin = await request(app)
+    .post("/login")
+    .send(userAdmCharityDataSession)
+
+    const createReservation = await request(app)
+    .post(`/reservations/${createdDonation.body.id}`)
+    .set("Authorization", `Bearer ${charityLogin.body.token}`)
+
+    const response = await request(app)
+    .delete(`/donations/${createdDonation.body.id}`)
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+
+    const donations = await request(app)
+    .get("/donations")
+    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+
+    const donationIsAvailable = donations.body.find((donation: any) => donation.id == createdDonation.body.id)
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(donationIsAvailable.available).toBe(false)
+  })
 });

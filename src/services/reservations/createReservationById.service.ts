@@ -16,7 +16,6 @@ const createReservationByIdService = async (
   //encontrar usuário através da req.user(?)
   const user = await userRepository.findOneBy({ id: userId });
   const donation = await donationsRepository.findOneBy({ id: donationId });
-  console.log("donation", donation);
 
   if (!user) throw new AppError("User ID not found", 404);
   if (!donation) throw new AppError("Donation ID not found", 404);

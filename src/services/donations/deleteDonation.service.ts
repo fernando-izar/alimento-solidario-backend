@@ -19,7 +19,7 @@ const deleteDonationService = async (donationId: string, userId: string): Promis
             user: true
         }
     })
-
+    
     if(!donation){
         throw new AppError("Donation do not exist", 404)
     }
