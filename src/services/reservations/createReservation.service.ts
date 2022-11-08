@@ -1,4 +1,3 @@
-
 import AppDataSource from "../../data-source";
 import { Reservation } from "../../entities/reservations.entity";
 import { Donation } from "../../entities/donations.entity";
@@ -32,7 +31,7 @@ const createReservationService = async (
   })
   //verificacoes
   if (!donation.available) {
-    throw new AppError("This donation is not avaiable anymore");
+    throw new AppError("This donation is not avaiable anymore", 403);
   }
 
   await donationsRepository.update(donationId, { available: false });

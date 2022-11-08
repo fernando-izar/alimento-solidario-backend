@@ -7,7 +7,6 @@ const createReservationController = async (req: Request, res: Response) => {
   const newReservation: IReservationRequest = req.body;
   const userId = req.user.id;
   // const email = req.user.email;
-  console.log(newReservation, userId);
   const createReservation = await createReservationService(
     newReservation,
     userId
