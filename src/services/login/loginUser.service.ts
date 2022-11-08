@@ -24,7 +24,7 @@ const loginUserService = async ({ email, password }: IUserLogin) => {
   }
 
   const token = jwt.sign(
-    { isAdm: user.isAdm, type: user.type },
+    { isAdm: user.isAdm, type: user.type, email: user.email },
     process.env.SECRET_KEY as string,
     {
       expiresIn: "24h",

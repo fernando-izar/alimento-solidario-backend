@@ -7,6 +7,9 @@ import loginRoutes from "./routes/login.routes";
 import classificationRoutes from "./routes/classifications.routes";
 import donationsRoutes from "./routes/donations.routes";
 import reservationsRoutes from "./routes/reservations.routes";
+import { Request, Response } from "express";
+import { IEmailRequest } from "./interfaces/email.interface";
+import sendEmail from "./nodemailer.util";
 
 const app = express();
 app.use(express.json());
