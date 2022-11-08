@@ -7,7 +7,8 @@ declare global {
             user: {
                 id: string,
                 isAdm: boolean,
-                type: string
+                type: string,
+                email: string,
             }
             updateDonation: IDonationUpdate
         }
