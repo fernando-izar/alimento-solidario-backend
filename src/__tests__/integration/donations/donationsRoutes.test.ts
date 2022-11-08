@@ -7,11 +7,14 @@ import {
   donationMock,
   donationMock6,
   donationMock7,
+  donationMock8,
+  donationMock9,
   donationMockNo2,
   donationMockNo3,
   donationMockNo4,
   donationMockNo5,
   expiratedDonationMock,
+  updateDonationMock,
 } from "../../mocks/donationsRoutes.mocks";
 import {
   userAdmCharityData,
@@ -25,7 +28,7 @@ import {
   userNotAdmDonorDataLogin,
   userTestDonorData,
 } from "../../mocks/userRoutes.mocks";
-import { mockedClassification1, mockedClassification4, mockedClassification5 } from "../../mocks/classificationsTest.mocks";
+import { mockedClassification1, mockedClassification4, mockedClassification5, mockedClassification6, mockedClassification7 } from "../../mocks/classificationsTest.mocks";
 import { Donation } from "../../../entities/donations.entity";
 import { create } from "domain";
 
@@ -335,4 +338,144 @@ describe("/donations", () => {
     expect(response.body).toHaveProperty("message");
     expect(donationIsAvailable.available).toBe(false)
   })
+
+  test("PATCH /donations/:id -> Should not be able to update donations without authentication", async () => {
+    const loginAdm = await request(app)
+      .post("/login")
+      .send(userAdmDonorDataLogin);
+
+    const createClassification = await request(app)
+      .post("/classifications")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(mockedClassification6);
+      donationMock8.classification = createClassification.body.id;
+  
+    const donations = await request(app)
+      .post("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(donationMock8);
+
+    const response = await request(app)
+      .patch(`/donations/${donations.body.id}`)
+      .send(updateDonationMock);
+
+    const findDonation = await request(app)
+      .get(`/donations/${donations.body.id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const donationUpdated = (
+        findDonation.body.food !== donations.body.food
+        ||
+        findDonation.body.quantity !== donations.body.quantity 
+        ||
+        findDonation.body.available !== donations.body.available  
+        );
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(donationUpdated).toBe(false);
+  })
+
+  test("PATCH /donations/:id -> Should not be able to update donation id", async () => {
+    const loginAdm = await request(app)
+      .post("/login")
+      .send(userAdmDonorDataLogin);
+
+    const createClassification = await request(app)
+      .post("/classifications")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(mockedClassification7);
+      donationMock9.classification = createClassification.body.id;
+  
+    const donations = await request(app)
+      .post("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(donationMock9);
+
+    const fakeId = "fake-id-123456"
+
+    const response = await request(app)
+      .patch(`/donations/${donations.body.id}`)
+      .send( { 
+        id: fakeId
+      });
+
+    const findDonation = await request(app)
+      .get(`/donations/${donations.body.id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const donationUpdated = (fakeId === donations.body.id);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(donationUpdated).toBe(false);
+  })
+
+  test("PATCH /donations/:id -> Should not be able to update donation expiration", async () => {
+    const loginAdm = await request(app)
+      .post("/login")
+      .send(userAdmDonorDataLogin);
+
+    const donations = await request(app)
+      .get("/donations")
+
+    const fakeExpiration = "31/12/2023"
+    const response = await request(app)
+      .patch(`/donations/${donations.body[0].id}`)
+      .send( { 
+        expiration: fakeExpiration
+      });
+
+    const findDonation = await request(app)
+      .get(`/donations/${donations.body.id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+    
+    const donationUpdated = (fakeExpiration === donations.body[0].expiration);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(donationUpdated).toBe(false);
+  })
+
+  test("PATCH /donations/:id -> Must be able to update donation", async () => {
+    
+    const loginAdm = await request(app)
+    .post("/login")
+    .send(userAdmDonorDataLogin);
+
+    const donations = await request(app)
+      .get("/donations");
+
+    const response = await request(app)
+      .patch(`/donations/${donations.body[0].id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(updateDonationMock);
+
+    console.log("response")
+    console.log(response)
+
+    const findDonation = await request(app)
+      .get(`/donations/${donations.body[0].id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
+
+    const donationUpdated = (
+        findDonation.body.food === updateDonationMock.food
+        &&
+        findDonation.body.quantity === updateDonationMock.quantity 
+        &&
+        findDonation.body.available === updateDonationMock.available  
+        );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body).toHaveProperty("food");
+    expect(response.body).toHaveProperty("quantity");
+    expect(response.body).toHaveProperty("expiration");
+    expect(response.body).toHaveProperty("available");
+    expect(response.body).toHaveProperty("createdAt");
+    expect(response.body).toHaveProperty("updatedAt");
+    expect(response.body).toHaveProperty("classification");
+    expect(donationUpdated).toBe(true);
+  })
+
 });
