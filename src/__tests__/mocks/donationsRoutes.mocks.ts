@@ -1,4 +1,7 @@
-import { IDonationRequest, IDonationUpdate } from "../../interfaces/donations.interface";
+import {
+  IDonationRequest,
+  IDonationUpdate,
+} from "../../interfaces/donations.interface";
 
 export const donationMock: IDonationRequest = {
   food: "Salsicha enlatada",
@@ -10,7 +13,7 @@ export const donationMock: IDonationRequest = {
 export const updateDonationMock: IDonationUpdate = {
   food: "Salsicha Premium Atualizada",
   quantity: "15",
-  available: false
+  available: false,
 };
 
 export const expiratedDonationMock: IDonationRequest = {

@@ -28,7 +28,13 @@ import {
   userNotAdmDonorDataLogin,
   userTestDonorData,
 } from "../../mocks/userRoutes.mocks";
-import { mockedClassification1, mockedClassification4, mockedClassification5, mockedClassification6, mockedClassification7 } from "../../mocks/classificationsTest.mocks";
+import {
+  mockedClassification1,
+  mockedClassification4,
+  mockedClassification5,
+  mockedClassification6,
+  mockedClassification7,
+} from "../../mocks/classificationsTest.mocks";
 import { Donation } from "../../../entities/donations.entity";
 import { create } from "domain";
 
@@ -230,7 +236,7 @@ describe("/donations", () => {
     expect(response.status).toBe(204);
     expect(donationNotDeleted).toBe(false);
   });
-  
+
   test("DELETE /donations/:id -> Should not be able to delete donations without authentications", async () => {
     const loginAdm = await request(app)
       .post("/login")
@@ -240,8 +246,8 @@ describe("/donations", () => {
       .get("/donations")
       .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
-    const response = await request(app)
-      .delete(`/donations/${donations.body[0].id}`
+    const response = await request(app).delete(
+      `/donations/${donations.body[0].id}`
     );
 
     const findDonation = await request(app)
@@ -255,89 +261,90 @@ describe("/donations", () => {
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message");
     expect(donationNotDeleted).toBe(true);
-  })
+  });
 
   test("DELETE /donations/:id -> Should not be able to delete donation if user is not the donation creator", async () => {
-    const createdAdm = await request(app)
-    .post("/users")
-    .send(userLoginDonor)
-    
+    const createdAdm = await request(app).post("/users").send(userLoginDonor);
+
     const loginAdm = await request(app)
-    .post("/login")
-    .send(userLoginDonorSession);
+      .post("/login")
+      .send(userLoginDonorSession);
 
     const createClassification = await request(app)
-    .post("/classifications")
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
-    .send(mockedClassification4);
+      .post("/classifications")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(mockedClassification4);
     donationMock6.classification = createClassification.body.id;
 
     const createdDonation = await request(app)
-    .post("/donations")
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
-    .send(donationMock6);
+      .post("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(donationMock6);
 
     const loginDonorNotCreator = await request(app)
-    .post("/login")
-    .send(userAdmDonorData);
+      .post("/login")
+      .send(userAdmDonorData);
 
     const response = await request(app)
-    .delete(`/donations/${createdDonation.body.id}`)
-    .set("Authorization", `Bearer ${loginDonorNotCreator.body.token}`);
+      .delete(`/donations/${createdDonation.body.id}`)
+      .set("Authorization", `Bearer ${loginDonorNotCreator.body.token}`);
 
-    const notCreatorOfDonation = createdDonation.body.user.id !== loginDonorNotCreator.body.id
-    
+    const notCreatorOfDonation =
+      createdDonation.body.user.id !== loginDonorNotCreator.body.id;
+
     expect(response.status).toBe(403);
     expect(response.body).toHaveProperty("message");
     expect(notCreatorOfDonation).toBe(true);
   });
 
   test("DELETE /donations/:id -> Should not be able to delete donation if the donation is not available", async () => {
-    const createdAdm = await request(app)
-    .post("/users")
-    .send(userLoginDonor)
-    
+    const createdAdm = await request(app).post("/users").send(userLoginDonor);
+
     const loginAdm = await request(app)
-    .post("/login")
-    .send(userLoginDonorSession);
+      .post("/login")
+      .send(userLoginDonorSession);
 
     const createClassification = await request(app)
-    .post("/classifications")
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
-    .send(mockedClassification5);
+      .post("/classifications")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(mockedClassification5);
     donationMock7.classification = createClassification.body.id;
 
     const createdDonation = await request(app)
-    .post("/donations")
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
-    .send(donationMock7);
+      .post("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .send(donationMock7);
 
     const createCharity = await request(app)
-    .post("/users")
-    .send(userAdmCharityData)
+      .post("/users")
+      .send(userAdmCharityData);
 
     const charityLogin = await request(app)
-    .post("/login")
-    .send(userAdmCharityDataSession)
+      .post("/login")
+      .send(userAdmCharityDataSession);
 
     const createReservation = await request(app)
-    .post(`/reservations/${createdDonation.body.id}`)
-    .set("Authorization", `Bearer ${charityLogin.body.token}`)
+      .post(`/reservations/${createdDonation.body.id}`)
+      .set("Authorization", `Bearer ${charityLogin.body.token}`);
+
+    await request(app).get("/donations");
 
     const response = await request(app)
-    .delete(`/donations/${createdDonation.body.id}`)
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .delete(`/donations/${createdDonation.body.id}`)
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
     const donations = await request(app)
-    .get("/donations")
-    .set("Authorization", `Bearer ${loginAdm.body.token}`)
+      .get("/donations")
+      .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
-    const donationIsAvailable = donations.body.find((donation: any) => donation.id == createdDonation.body.id)
+    const donationIsAvailable = donations.body.find(
+      (donation: any) => donation.id == createdDonation.body.id
+    );
 
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message");
-    expect(donationIsAvailable.available).toBe(false)
-  })
+    expect(donationIsAvailable.available).toBe(false);
+  });
 
   test("PATCH /donations/:id -> Should not be able to update donations without authentication", async () => {
     const loginAdm = await request(app)
@@ -348,8 +355,8 @@ describe("/donations", () => {
       .post("/classifications")
       .set("Authorization", `Bearer ${loginAdm.body.token}`)
       .send(mockedClassification6);
-      donationMock8.classification = createClassification.body.id;
-  
+    donationMock8.classification = createClassification.body.id;
+
     const donations = await request(app)
       .post("/donations")
       .set("Authorization", `Bearer ${loginAdm.body.token}`)
@@ -363,18 +370,15 @@ describe("/donations", () => {
       .get(`/donations/${donations.body.id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
-    const donationUpdated = (
-        findDonation.body.food !== donations.body.food
-        ||
-        findDonation.body.quantity !== donations.body.quantity 
-        ||
-        findDonation.body.available !== donations.body.available  
-        );
+    const donationUpdated =
+      findDonation.body.food !== donations.body.food ||
+      findDonation.body.quantity !== donations.body.quantity ||
+      findDonation.body.available !== donations.body.available;
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message");
     expect(donationUpdated).toBe(false);
-  })
+  });
 
   test("PATCH /donations/:id -> Should not be able to update donation id", async () => {
     const loginAdm = await request(app)
@@ -385,86 +389,77 @@ describe("/donations", () => {
       .post("/classifications")
       .set("Authorization", `Bearer ${loginAdm.body.token}`)
       .send(mockedClassification7);
-      donationMock9.classification = createClassification.body.id;
-  
+    donationMock9.classification = createClassification.body.id;
+
     const donations = await request(app)
       .post("/donations")
       .set("Authorization", `Bearer ${loginAdm.body.token}`)
       .send(donationMock9);
 
-    const fakeId = "fake-id-123456"
+    const fakeId = "fake-id-123456";
 
     const response = await request(app)
       .patch(`/donations/${donations.body.id}`)
-      .send( { 
-        id: fakeId
+      .send({
+        id: fakeId,
       });
 
     const findDonation = await request(app)
       .get(`/donations/${donations.body.id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
-    const donationUpdated = (fakeId === donations.body.id);
+    const donationUpdated = fakeId === donations.body.id;
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message");
     expect(donationUpdated).toBe(false);
-  })
+  });
 
   test("PATCH /donations/:id -> Should not be able to update donation expiration", async () => {
     const loginAdm = await request(app)
       .post("/login")
       .send(userAdmDonorDataLogin);
 
-    const donations = await request(app)
-      .get("/donations")
+    const donations = await request(app).get("/donations");
 
-    const fakeExpiration = "31/12/2023"
+    const fakeExpiration = "31/12/2023";
     const response = await request(app)
       .patch(`/donations/${donations.body[0].id}`)
-      .send( { 
-        expiration: fakeExpiration
+      .send({
+        expiration: fakeExpiration,
       });
 
     const findDonation = await request(app)
       .get(`/donations/${donations.body.id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`);
-    
-    const donationUpdated = (fakeExpiration === donations.body[0].expiration);
+
+    const donationUpdated = fakeExpiration === donations.body[0].expiration;
 
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message");
     expect(donationUpdated).toBe(false);
-  })
+  });
 
   test("PATCH /donations/:id -> Must be able to update donation", async () => {
-    
     const loginAdm = await request(app)
-    .post("/login")
-    .send(userAdmDonorDataLogin);
+      .post("/login")
+      .send(userAdmDonorDataLogin);
 
-    const donations = await request(app)
-      .get("/donations");
+    const donations = await request(app).get("/donations");
 
     const response = await request(app)
       .patch(`/donations/${donations.body[0].id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`)
       .send(updateDonationMock);
 
-    console.log("response")
-    console.log(response)
-
     const findDonation = await request(app)
       .get(`/donations/${donations.body[0].id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`);
 
-    const donationUpdated = (
-        findDonation.body.food === updateDonationMock.food
-        &&
-        findDonation.body.quantity === updateDonationMock.quantity 
-        &&
-        findDonation.body.available === updateDonationMock.available  
-        );
+    const donationUpdated =
+      findDonation.body.food === updateDonationMock.food &&
+      findDonation.body.quantity === updateDonationMock.quantity &&
+      findDonation.body.available === updateDonationMock.available;
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("id");
@@ -476,6 +471,5 @@ describe("/donations", () => {
     expect(response.body).toHaveProperty("updatedAt");
     expect(response.body).toHaveProperty("classification");
     expect(donationUpdated).toBe(true);
-  })
-
+  });
 });

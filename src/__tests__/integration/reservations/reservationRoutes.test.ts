@@ -25,6 +25,7 @@ describe("/reservations", () => {
 
   beforeAll(async () => {
     await AppDataSource.initialize()
+
       .then((res) => {
         connection = res;
       })
@@ -54,12 +55,12 @@ describe("/reservations", () => {
 
     const donation1: IDonationRequest = {
       ...mockedDonationInfoToDelete,
-      classificationId: classifications[0].id,
+      classification: classifications[0].id,
     };
 
     const donation2: IDonationRequest = {
       ...mockedDonationInfoToCreate,
-      classificationId: classifications[0].id,
+      classification: classifications[0].id,
     };
 
     await request(app)
@@ -120,9 +121,6 @@ describe("/reservations", () => {
 
     const { body: donationsterte } = await request(app).get("/donations");
 
-    console.log("donations", donationsterte);
-    console.log("erro", marimba.error);
-
     const response = await request(app)
       .post("/reservations")
       .set("Authorization", `Bearer ${userLoginResponse.body.token}`)
@@ -149,6 +147,7 @@ describe("/reservations", () => {
     expect(response.body).toHaveProperty("date");
     expect(response.body).toHaveProperty("donation");
     expect(response.body).toHaveProperty("user");
+    expect(response.body.donation.available).toBeFalsy();
 
     reservations.push(response.body);
   });

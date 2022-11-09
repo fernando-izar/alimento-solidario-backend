@@ -8,7 +8,8 @@ import sendEmail from "../../nodemailer.util";
 
 const createReservationByIdService = async (
   donationId: string,
-  userId: string, email: string
+  userId: string,
+  email: string
 ): Promise<Reservation> => {
   const reservationsRepository = AppDataSource.getRepository(Reservation);
   const donationsRepository = AppDataSource.getRepository(Donation);
@@ -20,12 +21,12 @@ const createReservationByIdService = async (
 
   const donationExtended = await donationsRepository.find({
     where: {
-      id: donationId
+      id: donationId,
     },
     relations: {
-      user: true
-    }
-  })
+      user: true,
+    },
+  });
 
   // const userCharityEmail = userRepository.findOne({
   //   where: {
@@ -44,13 +45,16 @@ const createReservationByIdService = async (
 
   await donationsRepository.update(donationId, { available: false });
 
+  const donationUpdated = await donationsRepository.findOneBy({
+    id: donationId,
+  });
+
   const newReservation = reservationsRepository.create({
     user,
-    donation,
+    donation: donationUpdated!,
   });
 
   await reservationsRepository.save(newReservation);
-
 
   let subject = `Olá ${donationExtended[0].user.name}`;
   let text = `
@@ -59,15 +63,15 @@ const createReservationByIdService = async (
   O Alimento Solidário agradece mais uma vez sua doação!!!</h4>
   `;
   let to = `${donationExtended[0].user.email}`;
-  
-  await sendEmail({subject, text, to});
+
+  await sendEmail({ subject, text, to });
   // console.log("*********", email)
-  
+
   // subject = `Olá ${user.name}`
   // text = `Você reservou <strong>${donation.quantity} de ${donation.food}</strong> e a validade dessa mercadoria é ${donation.expiration}. O responsável pela doação é ${donationExtended[0].user.responsible} e o seu contato é ${donationExtended[0].user.contact}
   // <br>
-  // <h6>E-mail automático. Favor não responder!</h6>` 
-  // to = 
+  // <h6>E-mail automático. Favor não responder!</h6>`
+  // to =
   // await sendEmail({subject, text, to});
 
   return newReservation;

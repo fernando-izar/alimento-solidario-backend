@@ -72,11 +72,11 @@ export const mockedUserCharityLogin2: IUserLogin = {
 export const mockedDonationInfoToDelete = {
   food: "comida de pato",
   quantity: "10 sacos grandes",
-  expiration: "30/11/2022",
+  expiration: "11/30/2022",
 };
 
 export const mockedDonationInfoToCreate = {
   food: "pele de jacaré",
   quantity: "2 baldes",
-  expiration: "30/11/2022",
+  expiration: "11/30/2022",
 };
