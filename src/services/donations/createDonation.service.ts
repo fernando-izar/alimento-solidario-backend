@@ -20,7 +20,7 @@ const createDonationService = async (
 
   const donator = await userRepository.findOneBy({ id: user.id });
 
-  if (!food || !quantity || !expiration || !classification) {
+  if (!food || !quantity || !expiration) {
     throw new AppError("Incomplete information", 403);
   }
 
@@ -73,7 +73,7 @@ const createDonationService = async (
   <h6>E-mail automático. Favor não responder</h6>
   `;
   let to = `${finalDonation.user.email}`;
-  await sendEmail({subject, text, to});
+  await sendEmail({ subject, text, to });
 
   return finalDonation;
 };

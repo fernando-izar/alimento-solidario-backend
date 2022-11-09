@@ -33,6 +33,11 @@ donationsRoutes.delete(
   ensureIsDonor,
   deleteDonationController
 );
-donationsRoutes.patch("/:id", ensureAuthMiddleware, updateDonationController);
+donationsRoutes.patch(
+  "/:id",
+  ensureAuthMiddleware,
+  ensureIsDonor,
+  updateDonationController
+);
 
 export default donationsRoutes;
