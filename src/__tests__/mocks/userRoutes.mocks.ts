@@ -18,6 +18,29 @@ export const userAdmDonorData: IUserRequest = {
     }
 }
 
+export const userLoginDonor: IUserRequest = {
+    email: "teste13@mail.com",
+    password: "1234",
+    name: "Robson",
+    cnpj_cpf: "12345678913",
+    responsible: "Carlos",
+    contact: "1132320000",
+    type: "Donor",
+    isAdm: true,
+    address: {
+        address: "Rua das rosas",
+        complement: "32",
+        city: "Sao Paulo",
+        state: "SP",
+        zipCode: "05210000"
+    }
+}
+
+export const userLoginDonorSession: IUserLogin = {
+    email: "teste13@mail.com",
+    password: "1234"
+}
+
 export const userAdmCharityData: IUserRequest = {
     email: "teste2@mail.com",
     password: "1234",
@@ -34,6 +57,11 @@ export const userAdmCharityData: IUserRequest = {
     contact: "1132320001",
     type: "Charity",
     isAdm: true,
+}
+
+export const userAdmCharityDataSession: IUserLogin = {
+    email: "teste2@mail.com",
+    password: "1234"
 }
 
 export const userTestDonorData: IUserRequest = {

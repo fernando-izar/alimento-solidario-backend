@@ -13,6 +13,20 @@ export const mockedClassification3: IClassificationRequest = {
   name: "Biscoitos",
 };
 
+export const mockedClassification4: IClassificationRequest = {
+  name: "Salsichas",
+};
+
+export const mockedClassification5: IClassificationRequest = {
+  name: "Salsichas temperadas",
+};
+export const mockedClassification6: IClassificationRequest = {
+  name: "Salsichas importadas",
+};
+export const mockedClassification7: IClassificationRequest = {
+  name: "Salsichas saudavel",
+};
+
 export const mockedAdmin: IUserRequest = {
   email: "charity@mail.com",
   password: "1234",

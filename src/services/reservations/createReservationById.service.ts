@@ -17,7 +17,6 @@ const createReservationByIdService = async (
   //encontrar usuário através da req.user(?)
   const user = await userRepository.findOneBy({ id: userId });
   const donation = await donationsRepository.findOneBy({ id: donationId });
-  console.log("donation", donation);
 
   const donationExtended = await donationsRepository.find({
     where: {
