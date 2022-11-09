@@ -25,6 +25,7 @@ describe("/reservations", () => {
 
   beforeAll(async () => {
     await AppDataSource.initialize()
+
       .then((res) => {
         connection = res;
       })
@@ -146,6 +147,7 @@ describe("/reservations", () => {
     expect(response.body).toHaveProperty("date");
     expect(response.body).toHaveProperty("donation");
     expect(response.body).toHaveProperty("user");
+    expect(response.body.donation.available).toBeFalsy();
 
     reservations.push(response.body);
   });

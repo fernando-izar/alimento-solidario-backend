@@ -327,6 +327,8 @@ describe("/donations", () => {
       .post(`/reservations/${createdDonation.body.id}`)
       .set("Authorization", `Bearer ${charityLogin.body.token}`);
 
+    await request(app).get("/donations");
+
     const response = await request(app)
       .delete(`/donations/${createdDonation.body.id}`)
       .set("Authorization", `Bearer ${loginAdm.body.token}`);

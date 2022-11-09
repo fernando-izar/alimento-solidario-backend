@@ -6,8 +6,6 @@ const updateDonationService = async (
   id: string,
   updateDonationData: IDonationUpdate
 ): Promise<Donation> => {
-  console.log("********************", updateDonationData);
-
   const donationsRepository = AppDataSource.getRepository(Donation);
   const donationFound = await donationsRepository.findOne({
     where: {
