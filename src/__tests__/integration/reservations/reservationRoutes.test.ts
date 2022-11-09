@@ -54,12 +54,12 @@ describe("/reservations", () => {
 
     const donation1: IDonationRequest = {
       ...mockedDonationInfoToDelete,
-      classificationId: classifications[0].id,
+      classification: classifications[0].id,
     };
 
     const donation2: IDonationRequest = {
       ...mockedDonationInfoToCreate,
-      classificationId: classifications[0].id,
+      classification: classifications[0].id,
     };
 
     await request(app)
@@ -119,9 +119,6 @@ describe("/reservations", () => {
       .set("Authorization", `Bearer ${adminDonorLoginReponse.body.token}`);
 
     const { body: donationsterte } = await request(app).get("/donations");
-
-    console.log("donations", donationsterte);
-    console.log("erro", marimba.error);
 
     const response = await request(app)
       .post("/reservations")
